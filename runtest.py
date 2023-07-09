@@ -178,7 +178,7 @@ class Runner():
             if os.name == 'posix':
                 [outs,_,_] = select([self.stdout], [], [], 1)
                 if self.stdout not in outs:
-                    break
+                    continue
                 new_data = self.stdout.read(1)
             else:
                 try:
@@ -210,7 +210,10 @@ class Runner():
     def writeline(self, str):
         def _to_bytes(s):
             return bytes(s, "utf-8") if IS_PY_3 else s
-        self.stdin.write(_to_bytes(str.replace('\r', '\x16\r') + self.line_break))
+        if os.name == 'posix':
+            self.stdin.write(_to_bytes(str.replace('\r', '\x16\r') + self.line_break))
+        else:
+            self.stdin.write(_to_bytes(str + self.line_break))
 
     def cleanup(self):
         #print "cleaning up"
