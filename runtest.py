@@ -241,7 +241,10 @@ class TestReader:
     def __init__(self, test_file):
         self.line_num = 0
         f = open(test_file, newline='') if IS_PY_3 else open(test_file)
-        self.data = f.read().split('\n')
+        
+        # See: https://github.com/kanaka/mal/pull/640
+        self.data = f.read().replace('\r\n', '\n').replace('\r', '\n').split('\n')
+        
         self.soft = False
         self.deferrable = False
         self.optional = False
